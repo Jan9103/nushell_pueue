@@ -6,6 +6,8 @@
 	url: 'https://github.com/jan9103/nushell_pueue'
 	min_nu_version: [0 69 1]
 	max_nu_version: [0 70 0]
-	modules: ['job']
+	min_packer_version: [0 2 0]
+	max_packer_version: [0 2 0]
+	prefixed_modules: ['job']
 }
 # vim: ft=nu
