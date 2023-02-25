@@ -1,5 +1,13 @@
 # based on: https://github.com/nushell/nu_scripts/blob/main/background_task/job.nu
 
+# nu version independent `view-source`
+def get_source_code [block] {
+	if ((nu --version | split row '.').1 | into int) >= 76 {
+		view source $block
+	} else {
+		view-source $block
+	}
+}
 
 # spawn task to run in the background
 #
@@ -13,7 +21,7 @@ export def spawn [
 ] {
 	let config_path = $nu.config-path
 	let env_path = $nu.env-path
-	let source_code = (view-source $command | str trim -l -c '{' | str trim -r -c '}')
+	let source_code = (get_source_code $command | str trim -l -c '{' | str trim -r -c '}')
 	let job_id = (pueue add -p $"nu --config \"($config_path)\" --env-config \"($env_path)\" -c '($source_code)'")  # " <- fix nvim-treesitter syntax highlight
 	{job_id: $job_id}
 }
@@ -24,7 +32,7 @@ export def spawn [
 export def rspawn [
 	command: block  # the command to spawn
 ] {
-	let source_code = (view-source $command | str trim -l -c '{' | str trim -r -c '}')
+	let source_code = (get_source_code $command | str trim -l -c '{' | str trim -r -c '}')
 	let job_id = (pueue add -p $'nu -c "($source_code)"')
 	{job_id: $job_id}
 }
