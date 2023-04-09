@@ -70,8 +70,13 @@ export def clean [] {
 export def send [
 	id: int
 	input: string
+	--no-newline(-n)
 ] {
-	pueue send $id $input
+	if $no_newline {
+		^pueue send $id $input
+	} else {
+		^pueue send $id $"($input)\n"
+	}
 }
 
 # wait for job to finish
