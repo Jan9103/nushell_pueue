@@ -46,12 +46,13 @@ export def rspawn [
 }
 
 export def log [id: int] {
-	pueue log $id -f --json
+	^pueue log $id -f --json
 	| from json
 	| transpose -i info
 	| flatten --all
 	| flatten --all
 	| flatten status
+	| get 0
 }
 
 # get job running status
