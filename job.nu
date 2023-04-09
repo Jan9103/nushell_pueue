@@ -21,8 +21,12 @@ export def spawn [
 ] {
 	let config_path = $nu.config-path
 	let env_path = $nu.env-path
-	let source_code = (get_source_code $command | str trim -l -c '{' | str trim -r -c '}')
-	let job_id = (pueue add -p $"nu --config \"($config_path)\" --env-config \"($env_path)\" -c '($source_code)'")  # " <- fix nvim-treesitter syntax highlight
+	let source_code = (
+		get_source_code $command
+		| to json  # escape `"`, etc
+		| str substring 2..-2  # cut `"{` and `}"`
+	)
+	let job_id = (^pueue add -p $"nu --config \"($config_path)\" --env-config \"($env_path)\" -c '($source_code)'")  # " <- fix nvim-treesitter syntax highlight
 	{job_id: $job_id}
 }
 
@@ -32,8 +36,12 @@ export def spawn [
 export def rspawn [
 	command: block  # the command to spawn
 ] {
-	let source_code = (get_source_code $command | str trim -l -c '{' | str trim -r -c '}')
-	let job_id = (pueue add -p $'nu -c "($source_code)"')
+	let source_code = (
+		get_source_code $command
+		| to json  # escape `"`, etc
+		| str substring 2..-2  # remove `"{` and `}"`
+	)
+	let job_id = (^pueue add -p $'nu -c "($source_code)"')
 	{job_id: $job_id}
 }
 
